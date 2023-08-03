@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { AppContext, fetchURL } from '../App'
 import styled from 'styled-components';
 import useUserCheck from '../hooks/useUserCheck'
+import '../stylesheets/training.css'
 
 import { Box, Button, List, ListItem, ListItemText, IconButton, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
@@ -65,14 +66,9 @@ export default function RequiredTraining() {
             {
                 return;
             }
-            const response = await fetch(`${fetchURL}/requiredtraining/${userID}`);
+            const response = await fetch(`${fetchURL}/requiredTraining/user/${userID}`);
             const data = await response.json();
-            if(!Array.isArray(response)) {
-                setRequiredTraining([data]);
-            }
-            else {
-                setRequiredTraining(data);
-            }
+            setRequiredTraining(data);
 
         } catch (error) {
             console.error('Error fetching your required training', error);
@@ -199,6 +195,7 @@ export default function RequiredTraining() {
             {validToken ?
             (
                 <RequiredTrainingWrapper>
+
                     <TrainingContainer>
                         <Accordion expanded={expanded==='accordion1'} onClick={()=>handleExpand('accordion1')}>
                             <AccordionSummary
@@ -245,12 +242,15 @@ export default function RequiredTraining() {
                                                 completed = completionDate.toISOString().split('T')[0];
                                                 const intervalInMilliseconds = training.interval * 24 * 60 * 60 * 1000;
                                                 const newDueDate = new Date(completionDate.getTime() + intervalInMilliseconds);
-                                                dueDate = newDueDate.toISOString().split('T')[0];
+                                                dueDate = newDueDate.toISOString().split('T');
                                             } else {
                                                 const today = new Date();
+                                                if(!training.interval) {
+                                                    training.interval = 0;
+                                                }
                                                 const intervalInMilliseconds = training.interval * 24 * 60 * 60 * 1000;
                                                 const newDueDate = new Date(today.getTime() + intervalInMilliseconds);
-                                                dueDate = newDueDate.toISOString().split('T')[0];
+                                                dueDate = newDueDate.toISOString().split('T');
                                                 completed = 'Not completed'
                                             }
                                             return (
@@ -266,7 +266,9 @@ export default function RequiredTraining() {
                                                     </Link>
                                                 }
                                                 >
+                                                    {console.log(training)}
                                                 <ListItemText
+
                                                 primary={training.name}
                                                 secondary={
                                                     `Last Completed: ${completed}, Training Interval: ${training.interval? `${training.interval} days` : 'N/A'}, Due: ${dueDate}`
@@ -296,6 +298,7 @@ export default function RequiredTraining() {
                         </Accordion>
                         {/* } */}
                     </TrainingContainer>
+
                 </RequiredTrainingWrapper>
             )
             :
@@ -311,18 +314,21 @@ font-size: 1vw;
 margin-top: 3em`
 
 const TrainingContainer = styled.div`
-display:flex;
+display: flex;
 flex-direction: column;
 margin-top: 5em;
 height: 100%;`
 
 const RequiredTrainingWrapper = styled.div`
 display: flex;
+flex-direction: column;
 justify-content: center;
 align-items: center;
 width: 100%;
 height: 100%;
+overflow-y: hidden;
 `;
+
 const ListContainer = styled.div`
 flex-grow: 1;
 height:50vh;

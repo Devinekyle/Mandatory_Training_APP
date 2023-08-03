@@ -31,7 +31,7 @@ export default function TrainingDisplayUTM() {
   function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
     return () => setValue(value => value + 1); // update state to force render
-    // A function that increment 👆🏻 the previous state like here 
+    // A function that increment 👆🏻 the previous state like here
     // is better than directly setting `setValue(value + 1)`
 }
 
@@ -47,6 +47,8 @@ const forceUpdate = useForceUpdate();
   const EditPage = () => {
     forceUpdate();
     setEditmode(!editmode);
+
+    fetchTraining();
   }
 
 
@@ -67,7 +69,7 @@ const forceUpdate = useForceUpdate();
             </button>
             </div>
       </div>)}
-      
+
       {editmode && (
       <div className='top-menu'>
       <ButtonTraining onClick={()=>navigate(-1)}>Go Back</ButtonTraining>
@@ -83,7 +85,7 @@ const forceUpdate = useForceUpdate();
 
       {trainingData ?
       <FlexDiv>
-     
+
      {!editmode && ( <LeftDiv>
         <ListTitle>
           <StarIcon sx={{fontSize: 'xxx-large'}} />
@@ -116,17 +118,12 @@ const forceUpdate = useForceUpdate();
                 <Divider orientation="vertical" flexItem />
                 <Grid>
                 <h5>Interval</h5>
-                  {`Time Requirement: ${trainingData.interval} days`}
-                </Grid>
-                <Divider orientation="vertical" flexItem />
-                <Grid>
-                <h5>Source</h5>
-                  {`Source: ${trainingData.source}`}
+                {`Time Requirement: ${trainingData.interval ? `${trainingData.interval} ${trainingData.interval ===1 ? 'Day' : 'Days'}` : "One Time"}`}
                 </Grid>
                 <Divider orientation="vertical" flexItem />
                 <Grid sx={{paddingRight: 2}}>
-                <h5>Duty</h5>
-                  {`Duty: ${trainingData.source}`}
+                <h5>Source</h5>
+                  {`${trainingData.source}`}
                 </Grid>
               </Box>
           </SubDiv>
@@ -151,11 +148,11 @@ const forceUpdate = useForceUpdate();
           }}>
 
         </Box>
-      
+
       </LeftDiv>)}
 
       {editmode && (
-        <EditView props={trainingData}/>)}
+        <EditView props={editmode}/>)}
 
       <Divider sx={{height: '75vh'}}orientation="vertical" flexItem />
       <RightDiv>

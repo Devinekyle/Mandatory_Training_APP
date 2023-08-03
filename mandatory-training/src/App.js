@@ -6,7 +6,8 @@ import {
   Training, CreateTraining, Admin, UserAccount, CreateUserAccount, TrainingDisplay, ChangePassword
 } from './components';
 import TrainingDisplayUTM from './components/TrainingDisplay UTM-ADMIN';
-
+import UtmPersonellTrainingDetails from './components/UtmPersonellTrainingDetails';
+import LoadingScreen from './components/LoadingScreen';
 export const AppContext = createContext();
 export const fetchURL = process.env.REACT_APP_FETCH ? process.env.REACT_APP_FETCH : 'http://localhost:4000';
 
@@ -21,6 +22,7 @@ const App = ()=> {
     const [lastName, setLastName] = useState();
     const [isSupervisor, setIsSupervisor] = useState(false);
     const [registered, setRegistered] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const ContextObject = { user, setUser,
                             isVerified,  setIsVerified,
@@ -35,9 +37,18 @@ const App = ()=> {
                           }
 
     //console.log(ContextObject);
+    useEffect(() => {
+        // Simulate a loading delay for demonstration purposes
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 3000); // Set the time as per your requirement
+    }, []);
 
     return(
         <>
+        {isLoading ? (
+        <LoadingScreen />
+      ) : (
         <AppWrapper id="App">
             <AppContext.Provider value={ContextObject}>
                 <BrowserRouter>
@@ -52,6 +63,7 @@ const App = ()=> {
                             <Route path='/required-training/:training/*' element={<TrainingDisplay />} />
                             <Route path='/training/*' element={<Training />} />
                             <Route path='/create-training/*' element={<CreateTraining />} />
+                            <Route path="/unit-training-manager/:userId/:trainingId" element={<UtmPersonellTrainingDetails  />} />
                             <Route path='/unit-training-manager/*' element={<UTM />} />
                             <Route path='/administrator/*' element={<Admin />} />
                             <Route path='/accounts/:user/*' element={<UserAccount />} />
@@ -65,6 +77,7 @@ const App = ()=> {
                 </BrowserRouter>
             </AppContext.Provider>
         </AppWrapper>
+        )}
         </>
     );
 }
@@ -85,7 +98,6 @@ top: 0;
 z-index: 100;
 background-color: #ffffff;
 `
-const BodyContainer = styled.div`
-padding-top: 1%; // Adjust this to match your header height
+const BodyContainer = styled.div` // Adjust this to match your header height
 overflow-y: auto;
 `
